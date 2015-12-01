@@ -1,46 +1,48 @@
 require('jquery-caret');
 /*! jquery.atwho - v1.4.0 %>
-* Copyright (c) 2015 chord.luo <chord.luo@gmail.com>;
-* homepage: http://ichord.github.com/At.js
-* Licensed MIT
-*/
+ * Copyright (c) 2015 chord.luo <chord.luo@gmail.com>;
+ * homepage: http://ichord.github.com/At.js
+ * Licensed MIT
+ */
 
 (function (root, factory) {
     // AMD. Register as an anonymous module unless amdModuleId is set
-    
-    
+
+
     var a0 = require('jquery');
     module.exports = factory(a0) || module.exports;;
 }(this, function (jquery) {
     var $, Api, App, Controller, DEFAULT_CALLBACKS, EditableController, KEY_CODE, Model, TextareaController, View, slice = [].slice, extend = function (child, parent) {
-            for (var key in parent) {
-                if (hasProp.call(parent, key))
-                    child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor();
-            child.__super__ = parent.prototype;
-            return child;
-        }, hasProp = {}.hasOwnProperty;
+        for (var key in parent) {
+            if (hasProp.call(parent, key))
+                child[key] = parent[key];
+        }
+        function ctor() {
+            this.constructor = child;
+        }
+        ctor.prototype = parent.prototype;
+        child.prototype = new ctor();
+        child.__super__ = parent.prototype;
+        return child;
+    }, hasProp = {}.hasOwnProperty;
     $ = jquery;
     App = function () {
-        function App(inputor) {
+        function App(inputor, args) {
             this.currentFlag = null;
             this.controllers = {};
             this.aliasMaps = {};
+            this.args = args;
             this.$inputor = $(inputor);
             this.setupRootElement();
             this.listen();
         }
         App.prototype.createContainer = function (doc) {
-            var ref;
-            if ((ref = this.$el) != null) {
-                ref.remove();
+            var el;
+            if(el = this.args.insertEl) {
+                return $(el).append(this.$el = $('<div class=\'atwho-container\'></div>'));
+            } else{
+                return $(doc.body).append(this.$el = $('<div class=\'atwho-container\'></div>'));
             }
-            return $(doc.body).append(this.$el = $('<div class=\'atwho-container\'></div>'));
         };
         App.prototype.setupRootElement = function (iframe, asRoot) {
             var error;
@@ -176,26 +178,26 @@ require('jquery-caret');
         App.prototype.onKeyup = function (e) {
             var ref;
             switch (e.keyCode) {
-            case KEY_CODE.ESC:
-                e.preventDefault();
-                if ((ref = this.controller()) != null) {
-                    ref.view.hide();
-                }
-                break;
-            case KEY_CODE.DOWN:
-            case KEY_CODE.UP:
-            case KEY_CODE.CTRL:
-            case KEY_CODE.ENTER:
-                $.noop();
-                break;
-            case KEY_CODE.P:
-            case KEY_CODE.N:
-                if (!e.ctrlKey) {
+                case KEY_CODE.ESC:
+                    e.preventDefault();
+                    if ((ref = this.controller()) != null) {
+                        ref.view.hide();
+                    }
+                    break;
+                case KEY_CODE.DOWN:
+                case KEY_CODE.UP:
+                case KEY_CODE.CTRL:
+                case KEY_CODE.ENTER:
+                    $.noop();
+                    break;
+                case KEY_CODE.P:
+                case KEY_CODE.N:
+                    if (!e.ctrlKey) {
+                        this.dispatch(e);
+                    }
+                    break;
+                default:
                     this.dispatch(e);
-                }
-                break;
-            default:
-                this.dispatch(e);
             }
         };
         App.prototype.onKeydown = function (e) {
@@ -205,53 +207,53 @@ require('jquery-caret');
                 return;
             }
             switch (e.keyCode) {
-            case KEY_CODE.ESC:
-                e.preventDefault();
-                view.hide(e);
-                break;
-            case KEY_CODE.UP:
-                e.preventDefault();
-                view.prev();
-                break;
-            case KEY_CODE.DOWN:
-                e.preventDefault();
-                view.next();
-                break;
-            case KEY_CODE.P:
-                if (!e.ctrlKey) {
-                    return;
-                }
-                e.preventDefault();
-                view.prev();
-                break;
-            case KEY_CODE.N:
-                if (!e.ctrlKey) {
-                    return;
-                }
-                e.preventDefault();
-                view.next();
-                break;
-            case KEY_CODE.TAB:
-            case KEY_CODE.ENTER:
-            case KEY_CODE.SPACE:
-                if (!view.visible()) {
-                    return;
-                }
-                if (!this.controller().getOpt('spaceSelectsMatch') && e.keyCode === KEY_CODE.SPACE) {
-                    return;
-                }
-                if (!this.controller().getOpt('tabSelectsMatch') && e.keyCode === KEY_CODE.TAB) {
-                    return;
-                }
-                if (view.highlighted()) {
+                case KEY_CODE.ESC:
                     e.preventDefault();
-                    view.choose(e);
-                } else {
                     view.hide(e);
-                }
-                break;
-            default:
-                $.noop();
+                    break;
+                case KEY_CODE.UP:
+                    e.preventDefault();
+                    view.prev();
+                    break;
+                case KEY_CODE.DOWN:
+                    e.preventDefault();
+                    view.next();
+                    break;
+                case KEY_CODE.P:
+                    if (!e.ctrlKey) {
+                        return;
+                    }
+                    e.preventDefault();
+                    view.prev();
+                    break;
+                case KEY_CODE.N:
+                    if (!e.ctrlKey) {
+                        return;
+                    }
+                    e.preventDefault();
+                    view.next();
+                    break;
+                case KEY_CODE.TAB:
+                case KEY_CODE.ENTER:
+                case KEY_CODE.SPACE:
+                    if (!view.visible()) {
+                        return;
+                    }
+                    if (!this.controller().getOpt('spaceSelectsMatch') && e.keyCode === KEY_CODE.SPACE) {
+                        return;
+                    }
+                    if (!this.controller().getOpt('tabSelectsMatch') && e.keyCode === KEY_CODE.TAB) {
+                        return;
+                    }
+                    if (view.highlighted()) {
+                        e.preventDefault();
+                        view.choose(e);
+                    } else {
+                        view.hide(e);
+                    }
+                    break;
+                default:
+                    $.noop();
             }
         };
         return App;
@@ -584,14 +586,14 @@ require('jquery-caret');
             }
             if ($query.length > 0) {
                 switch (e.which) {
-                case KEY_CODE.LEFT:
-                    this._setRange('before', $query.get(0), range);
-                    $query.removeClass('atwho-query');
-                    return;
-                case KEY_CODE.RIGHT:
-                    this._setRange('after', $query.get(0).nextSibling, range);
-                    $query.removeClass('atwho-query');
-                    return;
+                    case KEY_CODE.LEFT:
+                        this._setRange('before', $query.get(0), range);
+                        $query.removeClass('atwho-query');
+                        return;
+                    case KEY_CODE.RIGHT:
+                        this._setRange('after', $query.get(0).nextSibling, range);
+                        $query.removeClass('atwho-query');
+                        return;
                 }
             }
             if ($query.length > 0 && (query_content = $query.attr('data-atwho-at-query'))) {
@@ -1020,7 +1022,7 @@ require('jquery-caret');
         this.filter('textarea, input, [contenteditable=""], [contenteditable=true]').each(function () {
             var $this, app;
             if (!(app = ($this = $(this)).data('atwho'))) {
-                $this.data('atwho', app = new App(this));
+                $this.data('atwho', app = new App(this, _args[0]));
             }
             if (typeof method === 'object' || !method) {
                 return app.reg(method.at, method);
