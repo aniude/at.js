@@ -14,9 +14,6 @@
   "scripts": {
     "test": "grunt test --verbose"
   },
-  "dependencies": {
-    "jquery": "^1.7.0"
-  },
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-contrib-coffee": "^0.13.0",
@@ -29,17 +26,5 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-json-replace": "^0.1.2",
     "grunt-umd": "^2.3.3"
-  },
-  "spm": {
-    "main": "dist/js/jquery.atwho.js",
-    "dependencies": {
-      "jquery": ">=1.7.2",
-      "caret.js": "~0.2.2"
-    },
-    "ignore": [
-      "examples",
-      "spec",
-      "src"
-    ]
   }
 }

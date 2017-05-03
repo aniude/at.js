@@ -1,4 +1,3 @@
-require('jquery-caret');
 /*! jquery.atwho - v1.4.0 %>
  * Copyright (c) 2015 chord.luo <chord.luo@gmail.com>;
  * homepage: http://ichord.github.com/At.js
